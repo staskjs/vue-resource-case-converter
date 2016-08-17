@@ -43,3 +43,7 @@ to be processed by interceptor.
         // Your custom logic
       },
     });
+
+## Notes
+
+This plugin was inspired by [this angular.js version](https://github.com/ZupIT/angular-http-case-converter).
