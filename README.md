@@ -14,6 +14,10 @@ This module can be used to keep consistent code style on both backend and your v
 
 ## Installation
 
+    $ npm i vue-resource-case-converter
+
+Then in your code:
+
     const Vue = require('vue');
     const VueResource = require('vue-resource');
     const VueResourceCaseConverter = require('vue-resource-case-converter');
