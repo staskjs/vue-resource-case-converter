@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // and response params to camel case
 //
 
-function snakeCase(string) {
+function camelCase(string) {
   var find = /(\_\w)/g;
   var convert = function convert(matches) {
     return matches[1].toUpperCase();
@@ -17,7 +17,7 @@ function snakeCase(string) {
   return string.replace(find, convert);
 }
 
-function camelCase(string) {
+function snakeCase(string) {
   var find = /([A-Z])/g;
   var convert = function convert(matches) {
     return '_' + matches.toLowerCase();
