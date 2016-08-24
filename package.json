@@ -1,6 +1,6 @@
 {
   "name": "vue-resource-case-converter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Vue resource plugin to convert request json keys to snake_case and response json keys to camelCase",
   "main": "index.js",
   "scripts": {
