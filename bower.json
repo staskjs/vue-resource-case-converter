@@ -1,0 +1,27 @@
+{
+  "name": "vue-resource-case-converter",
+  "description": "Vue resource plugin to convert request json keys to snake_case and response json keys to camelCase",
+  "main": "dist/vue-resource-case-converter.js",
+  "authors": [
+    "Stas Karpov"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "vue",
+    "vue-resource",
+    "case",
+    "converter",
+    "snake",
+    "case",
+    "camel",
+    "case"
+  ],
+  "homepage": "https://github.com/staskjs/vue-resource-case-converter",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
