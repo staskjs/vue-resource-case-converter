@@ -1,8 +1,8 @@
 {
   "name": "vue-resource-case-converter",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Vue resource plugin to convert request json keys to snake_case and response json keys to camelCase",
-  "main": "dist/vue-resource-case-converter.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,10 +26,7 @@
     "url": "https://github.com/staskjs/vue-resource-case-converter/issues"
   },
   "homepage": "https://github.com/staskjs/vue-resource-case-converter#readme",
-  "dependencies": {
-    "camel-case": "^3.0.0",
-    "snake-case": "^2.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-preset-es2015": "^6.13.2",
     "gulp": "^3.9.1",

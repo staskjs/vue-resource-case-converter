@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -7,8 +9,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // and response params to camel case
 //
 
-var snakeCase = require('snake-case');
-var camelCase = require('camel-case');
+function snakeCase(string) {
+  var find = /(\_\w)/g;
+  var convert = function convert(matches) {
+    return matches[1].toUpperCase();
+  };
+  return string.replace(find, convert);
+}
+
+function camelCase(string) {
+  var find = /([A-Z])/g;
+  var convert = function convert(matches) {
+    return '_' + matches.toLowerCase();
+  };
+  return string.replace(find, convert);
+}
 
 function getClass(obj) {
   // Workaround for detecting native classes.
@@ -37,7 +52,7 @@ function convertObjectKeys(obj, keyConversionFun) {
   }, Array.isArray(obj) ? [] : {}); // preserve "arrayness"
 }
 
-module.exports = {
+var VueResourceCaseConverter = {
 
   install: function install(Vue, options) {
     var requestUrlFilter = function requestUrlFilter() {
@@ -89,3 +104,7 @@ module.exports = {
     });
   }
 };
+
+if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
+  module.exports = VueResourceCaseConverter;
+}

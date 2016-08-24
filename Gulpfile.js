@@ -4,7 +4,7 @@ const uglify = require('gulp-uglifyjs');
 const rename = require('gulp-rename');
  
 gulp.task('default', () => {
-    return gulp.src('index.js')
+    return gulp.src('src/vue-resource-case-converter.js')
         .pipe(babel({
             presets: ['es2015']
         }))
