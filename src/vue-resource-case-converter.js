@@ -72,7 +72,7 @@ var VueResourceCaseConverter = {
     Vue.http.interceptors.push((request, next) => {
       if (requestUrlFilter(request.url)) {
         request.params = convertObjectKeys(request.params, snakeCase);
-        request.params = convertObjectKeys(request.body, snakeCase);
+        request.body = convertObjectKeys(request.body, snakeCase);
       }
 
       next((response) => {
