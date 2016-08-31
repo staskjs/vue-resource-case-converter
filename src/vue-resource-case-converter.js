@@ -41,9 +41,7 @@ function convertObjectKeys(obj, keyConversionFun) {
     return obj; // Primitives are returned unchanged.
   }
   return Object.keys(obj).reduce((newObj, key) => {
-    Object.assign(newObj, {
-      [keyConversionFun(key)]: convertObjectKeys(obj[key], keyConversionFun),
-    });
+    newObj[keyConversionFun(key)] = convertObjectKeys(obj[key], keyConversionFun);
     return newObj;
   }, Array.isArray(obj) ? [] : {}); // preserve "arrayness"
 }
@@ -73,10 +71,8 @@ var VueResourceCaseConverter = {
 
     Vue.http.interceptors.push((request, next) => {
       if (requestUrlFilter(request.url)) {
-        Object.assign(request, {
-          params: convertObjectKeys(request.params, snakeCase),
-          body: convertObjectKeys(request.body, snakeCase),
-        });
+        request.params = convertObjectKeys(request.params, snakeCase);
+        request.params = convertObjectKeys(request.body, snakeCase);
       }
 
       next((response) => {
@@ -93,9 +89,7 @@ var VueResourceCaseConverter = {
         }
 
         const convertedBody = convertObjectKeys(parsedBody, camelCase);
-        Object.assign(response, {
-          body: JSON.stringify(convertedBody),
-        });
+        response.body = JSON.stringify(convertedBody);
         return response;
       });
     });

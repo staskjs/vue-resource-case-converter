@@ -2,8 +2,6 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 // Plugin for vue-resource to convert request params to snake case
 // and response params to camel case
@@ -47,7 +45,7 @@ function convertObjectKeys(obj, keyConversionFun) {
     return obj; // Primitives are returned unchanged.
   }
   return Object.keys(obj).reduce(function (newObj, key) {
-    Object.assign(newObj, _defineProperty({}, keyConversionFun(key), convertObjectKeys(obj[key], keyConversionFun)));
+    newObj[keyConversionFun(key)] = convertObjectKeys(obj[key], keyConversionFun);
     return newObj;
   }, Array.isArray(obj) ? [] : {}); // preserve "arrayness"
 }
@@ -77,10 +75,8 @@ var VueResourceCaseConverter = {
 
     Vue.http.interceptors.push(function (request, next) {
       if (requestUrlFilter(request.url)) {
-        Object.assign(request, {
-          params: convertObjectKeys(request.params, snakeCase),
-          body: convertObjectKeys(request.body, snakeCase)
-        });
+        request.params = convertObjectKeys(request.params, snakeCase);
+        request.params = convertObjectKeys(request.body, snakeCase);
       }
 
       next(function (response) {
@@ -96,9 +92,7 @@ var VueResourceCaseConverter = {
         }
 
         var convertedBody = convertObjectKeys(parsedBody, camelCase);
-        Object.assign(response, {
-          body: JSON.stringify(convertedBody)
-        });
+        response.body = JSON.stringify(convertedBody);
         return response;
       });
     });
