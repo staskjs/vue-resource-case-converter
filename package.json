@@ -1,8 +1,8 @@
 {
   "name": "vue-resource-case-converter",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Vue resource plugin to convert request json keys to snake_case and response json keys to camelCase",
-  "main": "index.js",
+  "main": "dist/vue-resource-case-converter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
