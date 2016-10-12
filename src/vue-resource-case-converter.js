@@ -80,7 +80,7 @@ var VueResourceCaseConverter = {
           return response;
         }
 
-        const convertedBody = convertObjectKeys(parsedBody, camelCase);
+        const convertedBody = convertObjectKeys(response.body, camelCase);
         response.body = convertedBody;
         return response;
       });
