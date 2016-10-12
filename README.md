@@ -25,6 +25,11 @@ Then in your code:
     Vue.use(VueResource);
     Vue.use(VueResourceCaseConverter);
 
+If you are still using older version of vue-resource (0.\*) then use 1.\* version of
+case converter.
+
+Version 2.\* does not work with 0.\* version of vue-resource, because it has some breaking changes.
+
 ## Configuration
 
 In order to restrict certain urls from converting,

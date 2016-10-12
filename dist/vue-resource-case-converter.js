@@ -84,15 +84,8 @@ var VueResourceCaseConverter = {
           return response;
         }
 
-        var parsedBody = void 0;
-        try {
-          parsedBody = JSON.parse(response.body);
-        } catch (e) {
-          return response;
-        }
-
         var convertedBody = convertObjectKeys(parsedBody, camelCase);
-        response.body = JSON.stringify(convertedBody);
+        response.body = convertedBody;
         return response;
       });
     });
