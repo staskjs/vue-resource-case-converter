@@ -19,6 +19,14 @@ function snakeCase (string) {
   return string.replace(find, convert);
 }
 
+function snakeCaseUnderscoreNumbers (string) {
+  let find = /([A-Z0-9]+)/g;
+  let convert = function(matches) {
+    return '_' + matches.toLowerCase();
+  };
+  return string.replace(find, convert);
+}
+
 function getClass(obj) {
     // Workaround for detecting native classes.
     // Examples:
@@ -46,42 +54,50 @@ function convertObjectKeys(obj, keyConversionFun) {
   }, Array.isArray(obj) ? [] : {}); // preserve "arrayness"
 }
 
+function mergeOptions(globalOptions, localOptions) {
+  // Combines the value of requestUrlFilter/responseUrlFilter with the global options
+  if (typeof(localOptions) === 'boolean') {
+    return Object.assign({}, globalOptions, {convert: localOptions});
+  }
+  return Object.assign({}, globalOptions, localOptions);
+}
+
 var VueResourceCaseConverter = {
 
   install: (Vue, options) => {
-    let requestUrlFilter = function () {
-      return true;
-    };
-
-    let responseUrlFilter = function () {
-      return true;
-    };
-
-    if (options != null && options.requestUrlFilter) {
-      requestUrlFilter = options.requestUrlFilter;
-    }
-    if (options != null && options.responseUrlFilter) {
-      responseUrlFilter = options.responseUrlFilter;
-    }
-
     if (Vue.http == null) {
       this.$log('Please add http-resource plugin to your Vue instance');
       return;
     }
 
-    Vue.http.interceptors.push((request, next) => {
-      if (requestUrlFilter(request.url)) {
-        request.params = convertObjectKeys(request.params, snakeCase);
-        request.body = convertObjectKeys(request.body, snakeCase);
+    let globalOptions = {
+      convert: true,
+      underscoreNumbers: false,
+      requestUrlFilter () {
+        return {};
+      },
+      responseUrlFilter () {
+        return {};
       }
+    };
+    Object.keys(globalOptions).forEach((key) => {
+      if (options && options.hasOwnProperty(key)) {
+        globalOptions[key] = options[key];
+      }
+    });
 
+    Vue.http.interceptors.push((request, next) => {
+      let options = mergeOptions(globalOptions, globalOptions.requestUrlFilter(request.url));
+      if (options.convert) {
+        let keyConversionFun = options.underscoreNumbers ? snakeCaseUnderscoreNumbers : snakeCase;
+        request.params = convertObjectKeys(request.params, keyConversionFun);
+        request.body = convertObjectKeys(request.body, keyConversionFun);
+      }
       next((response) => {
-        if (!responseUrlFilter(response.url)) {
-          return response;
+        let options = mergeOptions(globalOptions, globalOptions.responseUrlFilter(response.url));
+        if (options.convert) {
+          response.body = convertObjectKeys(response.body, camelCase);
         }
-
-        const convertedBody = convertObjectKeys(response.body, camelCase);
-        response.body = convertedBody;
         return response;
       });
     });
