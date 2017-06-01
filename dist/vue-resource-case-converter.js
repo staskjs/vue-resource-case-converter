@@ -2,6 +2,8 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 //
 // Plugin for vue-resource to convert request params to snake case
 // and response params to camel case
@@ -17,6 +19,14 @@ function camelCase(string) {
 
 function snakeCase(string) {
   var find = /([A-Z])/g;
+  var convert = function convert(matches) {
+    return '_' + matches.toLowerCase();
+  };
+  return string.replace(find, convert);
+}
+
+function snakeCaseUnderscoreNumbers(string) {
+  var find = /([A-Z0-9]+)/g;
   var convert = function convert(matches) {
     return '_' + matches.toLowerCase();
   };
@@ -50,42 +60,50 @@ function convertObjectKeys(obj, keyConversionFun) {
   }, Array.isArray(obj) ? [] : {}); // preserve "arrayness"
 }
 
+function mergeOptions(globalOptions, localOptions) {
+  // Combines the value of requestUrlFilter/responseUrlFilter with the global options
+  if (typeof localOptions === 'boolean') {
+    return _extends({}, globalOptions, { convert: localOptions });
+  }
+  return _extends({}, globalOptions, localOptions);
+}
+
 var VueResourceCaseConverter = {
 
   install: function install(Vue, options) {
-    var requestUrlFilter = function requestUrlFilter() {
-      return true;
-    };
-
-    var responseUrlFilter = function responseUrlFilter() {
-      return true;
-    };
-
-    if (options != null && options.requestUrlFilter) {
-      requestUrlFilter = options.requestUrlFilter;
-    }
-    if (options != null && options.responseUrlFilter) {
-      responseUrlFilter = options.responseUrlFilter;
-    }
-
     if (Vue.http == null) {
       undefined.$log('Please add http-resource plugin to your Vue instance');
       return;
     }
 
-    Vue.http.interceptors.push(function (request, next) {
-      if (requestUrlFilter(request.url)) {
-        request.params = convertObjectKeys(request.params, snakeCase);
-        request.body = convertObjectKeys(request.body, snakeCase);
+    var globalOptions = {
+      convert: true,
+      underscoreNumbers: false,
+      requestUrlFilter: function requestUrlFilter() {
+        return {};
+      },
+      responseUrlFilter: function responseUrlFilter() {
+        return {};
       }
+    };
+    Object.keys(globalOptions).forEach(function (key) {
+      if (options && options.hasOwnProperty(key)) {
+        globalOptions[key] = options[key];
+      }
+    });
 
+    Vue.http.interceptors.push(function (request, next) {
+      var options = mergeOptions(globalOptions, globalOptions.requestUrlFilter(request.url));
+      if (options.convert) {
+        var keyConversionFun = options.underscoreNumbers ? snakeCaseUnderscoreNumbers : snakeCase;
+        request.params = convertObjectKeys(request.params, keyConversionFun);
+        request.body = convertObjectKeys(request.body, keyConversionFun);
+      }
       next(function (response) {
-        if (!responseUrlFilter(response.url)) {
-          return response;
+        var options = mergeOptions(globalOptions, globalOptions.responseUrlFilter(response.url));
+        if (options.convert) {
+          response.body = convertObjectKeys(response.body, camelCase);
         }
-
-        var convertedBody = convertObjectKeys(response.body, camelCase);
-        response.body = convertedBody;
         return response;
       });
     });
