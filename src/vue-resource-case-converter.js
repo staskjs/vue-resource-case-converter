@@ -13,7 +13,10 @@ function camelCase (string) {
 
 function snakeCase (string) {
   let find = /([A-Z])/g;
-  let convert = function(matches) {
+  let convert = function(matches, subgroup, offset) {
+    if (offset === 0) {
+      return matches.toLowerCase();
+    }
     return '_' + matches.toLowerCase();
   };
   return string.replace(find, convert);
